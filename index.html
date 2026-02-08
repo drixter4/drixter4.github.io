@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1a050a 0%, #000000 100%);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #message-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2.5s ease-in;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        #message-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .content-box {
+            background: rgba(20, 5, 10, 0.85);
+            padding: 40px;
+            border-radius: 30px;
+            border: 2px solid #ff4d6d;
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.2);
+            text-align: center;
+            color: white;
+            max-width: 90%;
+            width: 380px;
+            backdrop-filter: blur(5px);
+            transform: translateY(30px);
+            transition: transform 1.5s ease-out;
+        }
+
+        #message-overlay.visible .content-box {
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #ff4d6d;
+            margin: 0 0 10px 0;
+            text-shadow: 0 0 15px #ff0055;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin: 5px 0;
+            color: #ffdce6;
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+        }
+
+        .time-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+        }
+
+        .time-label {
+            font-size: 0.65rem;
+            color: #ffb3c1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .big-question {
+            margin-top: 30px;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #ffccd5;
+            line-height: 1.4;
+        }
+
+        .buttons {
+            margin-top: 25px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff4d6d, #ff758f);
+            border: none;
+            color: white;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+        }
+
+        /* Animación suave de los corazones de celebración */
+        .celebration-heart {
+            position: fixed;
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUpGentle 4s ease-out forwards;
+        }
+
+        @keyframes floatUpGentle {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-50px) scale(1.2); }
+            100% { transform: translateY(-300px) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="message-overlay">
+        <div class="content-box">
+            <h1>Te Amo ❤️</h1>
+            <p>Juntos desde el 23 de agosto del 2025</p>
+            
+            <div class="timer-container" id="timer"></div>
+
+            <p class="big-question">Eres el amor de mi vida,<br>¿Quieres ser mi San Valentín?</p>
+            
+            <div class="buttons">
+                <button id="btn-yes" onclick="celebrate()">¡SÍ, ACEPTO!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('message-overlay');
+
+        let width, height;
+
+        // --- CONFIGURACIÓN PARA ÁRBOL FRONDOSO ---
+        const config = {
+            startDate: new Date('2025-08-23T00:00:00'),
+            colorBranch: '#5d4037',
+            // Paleta de colores rosa/rojo
+            colorLeaves: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd'], 
+            maxDepth: 12, // Aumentado para más ramas
+            growSpeed: 4, 
+            angleVar: 0.5 // Variación de ángulo para naturalidad
+        };
+
+        let branches = []; 
+        let leaves = [];
+        let particles = []; // Lluvia de fondo
+        let messageShown = false;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- CLASES ---
+
+        class Branch {
+            constructor(x, y, angle, length, depth, width) {
+                this.x = x;
+                this.y = y;
+                this.angle = angle;
+                this.targetLength = length;
+                this.currentLength = 0;
+                this.depth = depth;
+                this.width = width;
+                this.finished = false;
+                this.children = [];
+            }
+
+            update() {
+                // Crecimiento
+                if (this.currentLength < this.targetLength) {
+                    this.currentLength += config.growSpeed;
+                    
+                    // Si termina de crecer
+                    if (this.currentLength >= this.targetLength) {
+                        this.currentLength = this.targetLength;
+                        this.finished = true;
+                        
+                        // Si aún puede ramificarse
+                        if (this.depth > 0) {
+                            // Crear 2 ramas
+                            const endX = this.x + Math.cos(this.angle) * this.targetLength;
+                            const endY = this.y + Math.sin(this.angle) * this.targetLength;
+                            
+                            // Ángulos aleatorios pero controlados
+                            const angleLeft = this.angle - (Math.random() * 0.3 + 0.3);
+                            const angleRight = this.angle + (Math.random() * 0.3 + 0.3);
+                            
+                            // Reducir longitud y grosor
+                            this.children.push(new Branch(endX, endY, angleLeft, this.targetLength * 0.75, this.depth - 1, this.width * 0.7));
+                            this.children.push(new Branch(endX, endY, angleRight, this.targetLength * 0.75, this.depth - 1, this.width * 0.7));
+                        }
+
+                        // LÓGICA DE FRONDOSIDAD:
+                        // No solo ponemos hojas en la última rama (depth 0),
+                        // sino en las últimas 4 capas para que se vea lleno.
+                        if (this.depth < 5) {
+                            const endX = this.x + Math.cos(this.angle) * this.targetLength;
+                            const endY = this.y + Math.sin(this.angle) * this.targetLength;
+                            
+                            // Añadimos entre 1 y 3 hojas por rama para dar volumen
+                            let leafCount = Math.floor(Math.random() * 2) + 1;
+                            for(let i=0; i<leafCount; i++) {
+                                leaves.push(new HeartLeaf(endX, endY));
+                            }
+                        }
+                    }
+                }
+
+                this.children.forEach(child => child.update());
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.strokeStyle = config.colorBranch;
+                ctx.lineWidth = this.width;
+                ctx.lineCap = 'round';
+                ctx.moveTo(this.x, this.y);
+                
+                const endX = this.x + Math.cos(this.angle) * this.currentLength;
+                const endY = this.y + Math.sin(this.angle) * this.currentLength;
+                
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+
+                this.children.forEach(child => child.draw(ctx));
+            }
+        }
+
+        class HeartLeaf {
+            constructor(x, y) {
+                // Posición con pequeña variación para que no se vean alineadas artificialmente
+                this.x = x + (Math.random() - 0.5) * 15;
+                this.y = y + (Math.random() - 0.5) * 15;
+                this.targetSize = Math.random() * 8 + 5; // Tamaño variado
+                this.currentSize = 0;
+                this.color = config.colorLeaves[Math.floor(Math.random() * config.colorLeaves.length)];
+                // Angulo aleatorio del corazón
+                this.rotation = (Math.random() - 0.5) * 1; 
+            }
+
+            update() {
+                if (this.currentSize < this.targetSize) {
+                    this.currentSize += 0.3;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                // Dibujar corazón matemático
+                let s = this.currentSize;
+                ctx.moveTo(0,0);
+                ctx.bezierCurveTo(-s/2, -s/2, -s, s/3, 0, s);
+                ctx.bezierCurveTo(s, s/3, s/2, -s/2, 0, 0);
+                
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // --- INICIO ---
+        let root;
+        function initTree() {
+            // Empezar en el centro abajo
+            root = new Branch(width/2, height, -Math.PI/2, 130, config.maxDepth, 14);
+            loop();
+        }
+
+        function loop() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Dibujar Árbol
+            if(root) {
+                root.update();
+                root.draw(ctx);
+            }
+
+            // 2. Dibujar Hojas
+            leaves.forEach(leaf => {
+                leaf.update();
+                leaf.draw(ctx);
+            });
+
+            // 3. Chequear si terminó de crecer para mostrar mensaje
+            // Usamos un umbral alto de hojas para asegurar que ya se ve frondoso
+            if (!messageShown && leaves.length > 500) { 
+                setTimeout(() => {
+                    overlay.classList.add('visible');
+                    startTimer();
+                }, 1000);
+                messageShown = true;
+            }
+
+            // 4. Partículas de ambiente (Lluvia suave de pétalos)
+            if (messageShown) {
+                manageParticles();
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        function manageParticles() {
+            if (particles.length < 30) { // Pocas partículas para no saturar
+                particles.push({
+                    x: Math.random() * width,
+                    y: -10,
+                    speed: Math.random() * 1.5 + 0.5,
+                    size: Math.random() * 4 + 2,
+                    color: config.colorLeaves[Math.floor(Math.random() * config.colorLeaves.length)]
+                });
+            }
+            
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.y += p.speed;
+                p.x += Math.sin(p.y * 0.03); 
+                
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fill();
+
+                if (p.y > height) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        // --- CONTADOR ---
+        function startTimer() {
+            const timerDiv = document.getElementById('timer');
+            function update() {
+                const now = new Date();
+                const diff = now - config.startDate;
+                
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                timerDiv.innerHTML = `
+                    <div class="time-box"><span class="time-val">${d}</span><span class="time-label">Días</span></div>
+                    <div class="time-box"><span class="time-val">${h}</span><span class="time-label">Hrs</span></div>
+                    <div class="time-box"><span class="time-val">${m}</span><span class="time-label">Min</span></div>
+                    <div class="time-box"><span class="time-val">${s}</span><span class="time-label">Seg</span></div>
+                `;
+            }
+            setInterval(update, 1000);
+            update();
+        }
+
+        // --- CELEBRACIÓN SUAVE ---
+        window.celebrate = function() {
+            const btn = document.getElementById('btn-yes');
+            btn.innerHTML = "¡TE AMO! 💖";
+            btn.style.background = "#ff0055";
+            btn.disabled = true;
+
+            // En lugar de bucle masivo, usamos un intervalo controlado
+            let count = 0;
+            const maxHearts = 30; // Solo 30 corazones flotantes
+            
+            const interval = setInterval(() => {
+                createFloatingHeart();
+                count++;
+                if (count >= maxHearts) clearInterval(interval);
+            }, 150); // Uno cada 150ms (suave)
+        };
+
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            const emojis = ['❤️', '💖', '💘'];
+            heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.className = 'celebration-heart';
+            
+            // Posición aleatoria cerca del botón o centro
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight; // Empiezan desde abajo del todo
+
+            heart.style.left = startX + 'px';
+            heart.style.top = startY + 'px';
+            
+            document.body.appendChild(heart);
+            
+            // Limpieza automática
+            setTimeout(() => heart.remove(), 4000);
+        }
+
+        // Arrancar
+        initTree();
+
+    </script>
+</body>
+</html>
+
