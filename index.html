@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para Ti ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -24,6 +24,97 @@
             z-index: 1;
         }
 
+        /* --- BOTÓN DE INICIO (CORAZÓN JOYA) --- */
+        #start-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            background: rgba(0,0,0,0.5);
+            transition: opacity 1s;
+        }
+
+        /* Corazón CSS Puro para mayor belleza */
+        .heart-btn {
+            position: relative;
+            width: 100px;
+            height: 90px;
+            cursor: pointer;
+            animation: pulseHeart 1.5s infinite ease-in-out;
+            transition: transform 0.3s;
+            filter: drop-shadow(0 0 15px #ff0055);
+        }
+        
+        .heart-btn::before,
+        .heart-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 52px;
+            height: 80px;
+            border-radius: 50px 50px 0 0;
+            background: radial-gradient(circle at 30% 30%, #ff85a1, #ff0055);
+        }
+
+        .heart-btn::before {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart-btn::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 25px #ff0055);
+        }
+
+        .click-hint {
+            position: absolute;
+            top: 110%;
+            width: 200px;
+            left: -50px;
+            text-align: center;
+            color: #fff;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            animation: fadeInOut 2s infinite;
+        }
+
+        @keyframes pulseHeart {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* --- SEMILLA --- */
+        #seed {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #fff, #ffb3c1);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #fff, 0 0 30px #ff0055;
+            display: none;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* --- MENSAJE --- */
         #message-overlay {
             position: absolute;
             top: 0;
@@ -37,8 +128,7 @@
             z-index: 10;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 2.5s ease-in;
-            background: rgba(0, 0, 0, 0.4);
+            transition: opacity 2s ease-in;
         }
 
         #message-overlay.visible {
@@ -47,133 +137,160 @@
         }
 
         .content-box {
-            background: rgba(20, 5, 10, 0.85);
+            background: rgba(20, 0, 5, 0.6); 
             padding: 40px;
-            border-radius: 30px;
-            border: 2px solid #ff4d6d;
-            box-shadow: 0 0 50px rgba(255, 77, 109, 0.2);
+            border-radius: 25px;
+            backdrop-filter: blur(8px); 
             text-align: center;
             color: white;
             max-width: 90%;
-            width: 380px;
-            backdrop-filter: blur(5px);
-            transform: translateY(30px);
-            transition: transform 1.5s ease-out;
-        }
-
-        #message-overlay.visible .content-box {
-            transform: translateY(0);
+            width: 420px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), inset 0 0 20px rgba(255, 77, 109, 0.1);
+            border: 1px solid rgba(255, 77, 109, 0.3);
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
+            font-size: 4rem;
             color: #ff4d6d;
-            margin: 0 0 10px 0;
-            text-shadow: 0 0 15px #ff0055;
+            margin: 0;
+            text-shadow: 0 0 25px rgba(255, 77, 109, 0.6);
+            line-height: 1;
         }
 
-        p {
-            font-size: 1.1rem;
+        .initials {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #fff0f3;
+            margin: 5px 0 15px 0;
+            font-style: italic;
+            text-shadow: 0 0 10px #ff4d6d;
+        }
+
+        p.date {
+            font-size: 1rem;
             margin: 5px 0;
-            color: #ffdce6;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
         }
 
         .timer-container {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin: 25px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .time-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 50px;
+            width: 60px;
         }
 
         .time-val {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 600;
             color: #fff;
-            text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
         }
 
         .time-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: #ffb3c1;
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-top: 5px;
+            opacity: 0.8;
         }
 
         .big-question {
-            margin-top: 30px;
-            font-size: 1.4rem;
-            font-weight: 500;
-            color: #ffccd5;
-            line-height: 1.4;
+            margin-top: 25px;
+            font-size: 1.3rem;
+            color: #ffe6ea;
+            line-height: 1.5;
+            font-weight: 300;
         }
 
         .buttons {
-            margin-top: 25px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative; /* Necesario para el botón absoluto */
+            min-height: 50px;
         }
 
-        button {
-            background: linear-gradient(45deg, #ff4d6d, #ff758f);
-            border: none;
-            color: white;
-            padding: 12px 35px;
-            font-size: 1.1rem;
+        button.action-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            border: none;
+            outline: none;
         }
 
-        button:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+        #btn-yes {
+            background: linear-gradient(45deg, #ff4d6d, #ff0055);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            z-index: 5;
         }
 
-        /* Animación suave de los corazones de celebración */
-        .celebration-heart {
-            position: fixed;
-            font-size: 24px;
-            user-select: none;
+        #btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 77, 109, 0.6);
+        }
+
+        #btn-no {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffb3c1;
+            border: 1px solid rgba(255, 179, 193, 0.3);
+            z-index: 4;
+            transition: top 0.2s, left 0.2s; /* Movimiento suave */
+        }
+
+        /* Explosion particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
             pointer-events: none;
-            z-index: 1000;
-            animation: floatUpGentle 4s ease-out forwards;
         }
 
-        @keyframes floatUpGentle {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            20% { opacity: 1; transform: translateY(-50px) scale(1.2); }
-            100% { transform: translateY(-300px) scale(1); opacity: 0; }
-        }
     </style>
 </head>
 <body>
+
+    <div id="start-container">
+        <div class="heart-btn" onclick="startExperience()">
+            <div class="click-hint">Tócame</div>
+        </div>
+    </div>
+    
+    <div id="seed"></div>
 
     <canvas id="canvas"></canvas>
 
     <div id="message-overlay">
         <div class="content-box">
-            <h1>Te Amo ❤️</h1>
-            <p>Juntos desde el 23 de agosto del 2025</p>
+            <h1>Te Amo</h1>
+            <div class="initials">S & S</div>
+            <p class="date">23 de Agosto de 2025</p>
             
             <div class="timer-container" id="timer"></div>
 
-            <p class="big-question">Eres el amor de mi vida,<br>¿Quieres ser mi San Valentín?</p>
+            <p class="big-question">Eres el amor de mi vida...<br>¿Quieres ser mi San Valentín?</p>
             
             <div class="buttons">
-                <button id="btn-yes" onclick="celebrate()">¡SÍ, ACEPTO!</button>
+                <button class="action-btn" id="btn-yes" onclick="celebrate()">Sí, acepto</button>
+                <button class="action-btn" id="btn-no" onmouseover="moveButton()" onclick="moveButton()">No acepto</button>
             </div>
         </div>
     </div>
@@ -182,24 +299,22 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const overlay = document.getElementById('message-overlay');
+        const startContainer = document.getElementById('start-container');
+        const seed = document.getElementById('seed');
 
         let width, height;
-
-        // --- CONFIGURACIÓN PARA ÁRBOL FRONDOSO ---
+        // Configuración árbol
         const config = {
             startDate: new Date('2025-08-23T00:00:00'),
-            colorBranch: '#5d4037',
-            // Paleta de colores rosa/rojo
-            colorLeaves: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd'], 
-            maxDepth: 12, // Aumentado para más ramas
-            growSpeed: 4, 
-            angleVar: 0.5 // Variación de ángulo para naturalidad
+            colorBranch: '#543', 
+            colorLeaves: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#ffc2d1'], 
+            maxDepth: 12,
+            growSpeed: 5, 
         };
 
-        let branches = []; 
-        let leaves = [];
-        let particles = []; // Lluvia de fondo
+        let branches = [], leaves = [], particles = [];
         let messageShown = false;
+        let animationRunning = false;
 
         function resize() {
             width = window.innerWidth;
@@ -210,251 +325,256 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // --- CLASES ---
+        // --- 1. INICIO MÁGICO ---
+        function startExperience() {
+            const btn = document.querySelector('.heart-btn');
+            const rect = btn.getBoundingClientRect();
+            
+            startContainer.style.opacity = 0;
+            setTimeout(() => startContainer.style.display = 'none', 1000);
 
+            // Posicionar semilla
+            seed.style.display = 'block';
+            seed.style.left = (rect.left + rect.width/2 - 6) + 'px'; // -6 por mitad de ancho (12px)
+            seed.style.top = (rect.top + rect.height/2) + 'px';
+
+            // Animar caída
+            let seedY = rect.top + rect.height/2;
+            let velocity = 2;
+            let gravity = 0.8;
+            const floorY = height - 30; 
+
+            function dropSeed() {
+                velocity += gravity;
+                seedY += velocity;
+                seed.style.top = seedY + 'px';
+
+                if (seedY < floorY) {
+                    requestAnimationFrame(dropSeed);
+                } else {
+                    seed.style.display = 'none';
+                    initTree(); 
+                }
+            }
+            dropSeed();
+        }
+
+        // --- 2. LÓGICA ÁRBOL ---
         class Branch {
             constructor(x, y, angle, length, depth, width) {
-                this.x = x;
-                this.y = y;
-                this.angle = angle;
-                this.targetLength = length;
-                this.currentLength = 0;
-                this.depth = depth;
-                this.width = width;
-                this.finished = false;
+                this.x = x; this.y = y; this.angle = angle;
+                this.targetLength = length; this.currentLength = 0;
+                this.depth = depth; this.width = width;
                 this.children = [];
             }
-
             update() {
-                // Crecimiento
                 if (this.currentLength < this.targetLength) {
                     this.currentLength += config.growSpeed;
-                    
-                    // Si termina de crecer
                     if (this.currentLength >= this.targetLength) {
                         this.currentLength = this.targetLength;
-                        this.finished = true;
-                        
-                        // Si aún puede ramificarse
                         if (this.depth > 0) {
-                            // Crear 2 ramas
                             const endX = this.x + Math.cos(this.angle) * this.targetLength;
                             const endY = this.y + Math.sin(this.angle) * this.targetLength;
-                            
-                            // Ángulos aleatorios pero controlados
-                            const angleLeft = this.angle - (Math.random() * 0.3 + 0.3);
-                            const angleRight = this.angle + (Math.random() * 0.3 + 0.3);
-                            
-                            // Reducir longitud y grosor
-                            this.children.push(new Branch(endX, endY, angleLeft, this.targetLength * 0.75, this.depth - 1, this.width * 0.7));
-                            this.children.push(new Branch(endX, endY, angleRight, this.targetLength * 0.75, this.depth - 1, this.width * 0.7));
+                            this.children.push(new Branch(endX, endY, this.angle - (Math.random()*0.4+0.2), this.targetLength*0.75, this.depth-1, this.width*0.7));
+                            this.children.push(new Branch(endX, endY, this.angle + (Math.random()*0.4+0.2), this.targetLength*0.75, this.depth-1, this.width*0.7));
                         }
-
-                        // LÓGICA DE FRONDOSIDAD:
-                        // No solo ponemos hojas en la última rama (depth 0),
-                        // sino en las últimas 4 capas para que se vea lleno.
                         if (this.depth < 5) {
                             const endX = this.x + Math.cos(this.angle) * this.targetLength;
                             const endY = this.y + Math.sin(this.angle) * this.targetLength;
-                            
-                            // Añadimos entre 1 y 3 hojas por rama para dar volumen
                             let leafCount = Math.floor(Math.random() * 2) + 1;
-                            for(let i=0; i<leafCount; i++) {
-                                leaves.push(new HeartLeaf(endX, endY));
-                            }
+                            for(let i=0; i<leafCount; i++) leaves.push(new HeartLeaf(endX, endY));
                         }
                     }
                 }
-
-                this.children.forEach(child => child.update());
+                this.children.forEach(c => c.update());
             }
-
             draw(ctx) {
-                ctx.beginPath();
-                ctx.strokeStyle = config.colorBranch;
-                ctx.lineWidth = this.width;
-                ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.strokeStyle = config.colorBranch; ctx.lineWidth = this.width; ctx.lineCap = 'round';
                 ctx.moveTo(this.x, this.y);
-                
-                const endX = this.x + Math.cos(this.angle) * this.currentLength;
-                const endY = this.y + Math.sin(this.angle) * this.currentLength;
-                
-                ctx.lineTo(endX, endY);
+                ctx.lineTo(this.x + Math.cos(this.angle) * this.currentLength, this.y + Math.sin(this.angle) * this.currentLength);
                 ctx.stroke();
-
-                this.children.forEach(child => child.draw(ctx));
+                this.children.forEach(c => c.draw(ctx));
             }
         }
 
         class HeartLeaf {
             constructor(x, y) {
-                // Posición con pequeña variación para que no se vean alineadas artificialmente
-                this.x = x + (Math.random() - 0.5) * 15;
-                this.y = y + (Math.random() - 0.5) * 15;
-                this.targetSize = Math.random() * 8 + 5; // Tamaño variado
-                this.currentSize = 0;
-                this.color = config.colorLeaves[Math.floor(Math.random() * config.colorLeaves.length)];
-                // Angulo aleatorio del corazón
-                this.rotation = (Math.random() - 0.5) * 1; 
+                this.x = x + (Math.random()-0.5)*20; 
+                this.y = y + (Math.random()-0.5)*20;
+                this.targetSize = Math.random()*8+4; this.currentSize = 0;
+                this.color = config.colorLeaves[Math.floor(Math.random()*config.colorLeaves.length)];
+                this.rotation = (Math.random()-0.5);
             }
-
-            update() {
-                if (this.currentSize < this.targetSize) {
-                    this.currentSize += 0.3;
-                }
-            }
-
+            update() { if(this.currentSize < this.targetSize) this.currentSize += 0.3; }
             draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                // Dibujar corazón matemático
-                let s = this.currentSize;
-                ctx.moveTo(0,0);
-                ctx.bezierCurveTo(-s/2, -s/2, -s, s/3, 0, s);
-                ctx.bezierCurveTo(s, s/3, s/2, -s/2, 0, 0);
-                
-                ctx.fill();
-                ctx.restore();
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation); ctx.fillStyle = this.color;
+                ctx.beginPath(); let s = this.currentSize;
+                ctx.moveTo(0,0); ctx.bezierCurveTo(-s/2, -s/2, -s, s/3, 0, s); ctx.bezierCurveTo(s, s/3, s/2, -s/2, 0, 0);
+                ctx.fill(); ctx.restore();
             }
         }
 
-        // --- INICIO ---
         let root;
         function initTree() {
-            // Empezar en el centro abajo
-            root = new Branch(width/2, height, -Math.PI/2, 130, config.maxDepth, 14);
-            loop();
+            root = new Branch(width/2, height, -Math.PI/2, 140, config.maxDepth, 16);
+            if(!animationRunning) { animationRunning = true; loop(); }
         }
 
         function loop() {
             ctx.clearRect(0, 0, width, height);
-
-            // 1. Dibujar Árbol
-            if(root) {
-                root.update();
-                root.draw(ctx);
-            }
-
-            // 2. Dibujar Hojas
-            leaves.forEach(leaf => {
-                leaf.update();
-                leaf.draw(ctx);
-            });
-
-            // 3. Chequear si terminó de crecer para mostrar mensaje
-            // Usamos un umbral alto de hojas para asegurar que ya se ve frondoso
-            if (!messageShown && leaves.length > 500) { 
-                setTimeout(() => {
-                    overlay.classList.add('visible');
-                    startTimer();
-                }, 1000);
+            if(root) { root.update(); root.draw(ctx); }
+            leaves.forEach(l => { l.update(); l.draw(ctx); });
+            
+            if (!messageShown && leaves.length > 600) { 
+                setTimeout(() => { overlay.classList.add('visible'); startTimer(); }, 1500);
                 messageShown = true;
             }
-
-            // 4. Partículas de ambiente (Lluvia suave de pétalos)
-            if (messageShown) {
-                manageParticles();
-            }
-
+            if (messageShown) manageParticles();
             requestAnimationFrame(loop);
         }
 
         function manageParticles() {
-            if (particles.length < 30) { // Pocas partículas para no saturar
-                particles.push({
-                    x: Math.random() * width,
-                    y: -10,
-                    speed: Math.random() * 1.5 + 0.5,
-                    size: Math.random() * 4 + 2,
-                    color: config.colorLeaves[Math.floor(Math.random() * config.colorLeaves.length)]
-                });
+            if (particles.length < 30) { 
+                particles.push({x: Math.random()*width, y: -10, speed: Math.random()*2+1, size: Math.random()*3+1, color: config.colorLeaves[Math.floor(Math.random()*config.colorLeaves.length)]});
             }
-            
             for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                p.y += p.speed;
-                p.x += Math.sin(p.y * 0.03); 
-                
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                ctx.fill();
-
-                if (p.y > height) {
-                    particles.splice(i, 1);
-                    i--;
-                }
+                let p = particles[i]; p.y += p.speed; p.x += Math.sin(p.y*0.02); 
+                ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                if (p.y > height) { particles.splice(i, 1); i--; }
             }
         }
 
-        // --- CONTADOR ---
+        // --- 3. FUNCIONES DE INTERFAZ ---
+
         function startTimer() {
             const timerDiv = document.getElementById('timer');
             function update() {
-                const now = new Date();
-                const diff = now - config.startDate;
-                
+                const diff = new Date() - config.startDate;
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                timerDiv.innerHTML = `
-                    <div class="time-box"><span class="time-val">${d}</span><span class="time-label">Días</span></div>
-                    <div class="time-box"><span class="time-val">${h}</span><span class="time-label">Hrs</span></div>
-                    <div class="time-box"><span class="time-val">${m}</span><span class="time-label">Min</span></div>
-                    <div class="time-box"><span class="time-val">${s}</span><span class="time-label">Seg</span></div>
-                `;
+                timerDiv.innerHTML = `<div class="time-box"><span class="time-val">${d}</span><span class="time-label">Días</span></div><div class="time-box"><span class="time-val">${h}</span><span class="time-label">Hrs</span></div><div class="time-box"><span class="time-val">${m}</span><span class="time-label">Min</span></div><div class="time-box"><span class="time-val">${s}</span><span class="time-label">Seg</span></div>`;
             }
-            setInterval(update, 1000);
-            update();
+            setInterval(update, 1000); update();
         }
 
-        // --- CELEBRACIÓN SUAVE ---
+        // --- 4. TRUCO BOTÓN "NO" ---
+        window.moveButton = function() {
+            const btn = document.getElementById('btn-no');
+            const container = document.querySelector('.content-box');
+            
+            // Hacerlo absoluto si no lo es aún
+            btn.style.position = 'absolute';
+            btn.style.transition = 'all 0.2s';
+            
+            // Calcular límites seguros dentro de la caja para que no se salga
+            // O mejor aún, dentro de la ventana para más diversión
+            const maxX = window.innerWidth - btn.offsetWidth - 20;
+            const maxY = window.innerHeight - btn.offsetHeight - 20;
+            const minX = 20;
+            const minY = 20;
+
+            const newX = Math.random() * (maxX - minX) + minX;
+            const newY = Math.random() * (maxY - minY) + minY;
+
+            // Aplicar coordenadas fijas a la pantalla
+            btn.style.position = 'fixed'; // Salir del flujo de la caja
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
+        };
+
+        // --- 5. CELEBRACIÓN EXPLOSIVA ---
         window.celebrate = function() {
             const btn = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            
+            // Esconder botón NO
+            if(btnNo) btnNo.style.display = 'none';
+
             btn.innerHTML = "¡TE AMO! 💖";
             btn.style.background = "#ff0055";
-            btn.disabled = true;
-
-            // En lugar de bucle masivo, usamos un intervalo controlado
-            let count = 0;
-            const maxHearts = 30; // Solo 30 corazones flotantes
+            btn.style.transform = "scale(1.2)";
             
+            // Explosión de partículas HTML
+            createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+            createExplosion(window.innerWidth / 4, window.innerHeight / 3);
+            createExplosion(window.innerWidth * 0.75, window.innerHeight / 3);
+
+            // Iniciar lluvia continua de corazones grandes
+            let count = 0;
             const interval = setInterval(() => {
                 createFloatingHeart();
                 count++;
-                if (count >= maxHearts) clearInterval(interval);
-            }, 150); // Uno cada 150ms (suave)
+                if (count >= 100) clearInterval(interval); // Muchos más corazones
+            }, 50); // Muy rápido
         };
+
+        function createExplosion(x, y) {
+            const colors = ['#ff0055', '#ff4d6d', '#ffb3c1', '#fff', '#ffd700'];
+            for (let i = 0; i < 100; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.width = (Math.random() * 8 + 2) + 'px';
+                p.style.height = p.style.width;
+                
+                // Animación física simple con JS
+                document.body.appendChild(p);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 10 + 2;
+                let velX = Math.cos(angle) * velocity;
+                let velY = Math.sin(angle) * velocity;
+                let posX = x;
+                let posY = y;
+                let opacity = 1;
+
+                function animateParticle() {
+                    posX += velX;
+                    posY += velY;
+                    velY += 0.2; // Gravedad
+                    opacity -= 0.02;
+
+                    p.style.left = posX + 'px';
+                    p.style.top = posY + 'px';
+                    p.style.opacity = opacity;
+
+                    if (opacity > 0) {
+                        requestAnimationFrame(animateParticle);
+                    } else {
+                        p.remove();
+                    }
+                }
+                requestAnimationFrame(animateParticle);
+            }
+        }
 
         function createFloatingHeart() {
             const heart = document.createElement('div');
-            const emojis = ['❤️', '💖', '💘'];
+            const emojis = ['❤️', '💖', '💘', '💕', '😍', 'S&S'];
             heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-            heart.className = 'celebration-heart';
-            
-            // Posición aleatoria cerca del botón o centro
-            const startX = Math.random() * window.innerWidth;
-            const startY = window.innerHeight; // Empiezan desde abajo del todo
-
-            heart.style.left = startX + 'px';
-            heart.style.top = startY + 'px';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = window.innerHeight + 'px';
+            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            heart.style.zIndex = '1000';
+            heart.style.transition = 'top 3s ease-out, opacity 3s';
+            heart.style.color = '#fff';
+            heart.style.textShadow = '0 0 10px #ff0055';
             
             document.body.appendChild(heart);
             
-            // Limpieza automática
-            setTimeout(() => heart.remove(), 4000);
+            // Trigger animación
+            requestAnimationFrame(() => {
+                heart.style.top = '-50px';
+                heart.style.opacity = '0';
+            });
+            
+            setTimeout(() => heart.remove(), 3000);
         }
-
-        // Arrancar
-        initTree();
-
     </script>
 </body>
 </html>
-
